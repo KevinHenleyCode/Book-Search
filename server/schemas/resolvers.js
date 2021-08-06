@@ -34,13 +34,14 @@ const resolvers = {
         saveBook: async (parent, { book }, context) => {
             
             if (context.user) {
-                return User.findByIdAndUpdate(
-                    { new: true, runValidators: true },
-                    {_id: context.user._id},
-                    { $push: { savedBooks: book } }
+                const userUpdated = await User.findOneAndUpdate(
+                    { _id: context.user.id },
+                    { $addToSet: { savedBooks: book } },
+                    { new: true }
                 )
+                return userUpdated
             }
-            throw new AuthenticationError('Only users with an account can save books')
+            throw new AuthenticationError(`Hey! Go login if you want to save a book.`)
         },
 
         removeBook: async (parent, { bookId }, context) => {

@@ -33,7 +33,6 @@ const resolvers = {
 
         saveBook: async (parent, { book }, context) => {
             
-            book = { ...input }
             if (context.user) {
                 return User.findByIdAndUpdate(
                     { new: true, runValidators: true },

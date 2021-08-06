@@ -40,6 +40,7 @@ const resolvers = {
                     { new: true }
                 )
                 return userUpdated
+
             }
             throw new AuthenticationError(`Hey! Go login if you want to save a book.`)
         },
@@ -47,11 +48,13 @@ const resolvers = {
         removeBook: async (parent, { bookId }, context) => {
             
             if (context.user) {
-                return User.findByIdAndUpdate(
-                    { new: true },
-                    { $pull: { savedBooks: { bookId } } },
-                    { _id: context.user._id }
+                const userUpdated = await User.findOneAndRemove(
+                    { _id: context.user._id },
+                    { $pull: { savedBooks: { bookId: bookId } } },
+                    { new: true }
                 )
+                return userUpdated
+
             }
             throw new AuthenticationError('Only users with an account can remove books')
         }
